@@ -1,31 +1,16 @@
 const basePath = process.cwd();
 const { MODE } = require(`${basePath}/constants/blend_mode.js`);
-const { NETWORK } = require(`${basePath}/constants/network.js`);
-
-const network = NETWORK.eth;
 
 // General metadata for Ethereum
 const namePrefix = "Somewhere Nowhere";
-const description = "";
-const baseUri = "ipfs://IPFS_HASH_GOES_HERE";
-const baseExternalUrl = "https://somewherenowhere.xyz/hooman";
-
-const solanaMetadata = {
-  symbol: "YC",
-  seller_fee_basis_points: 1000, // Define how much % you want from secondary market sales 1000 = 10%
-  external_url: "https://www.youtube.com/c/hashlipsnft",
-  creators: [
-    {
-      address: "7fXNuer5sbZtaTEPhtJ5g5gNtuyRoKkvxdjEjEnPN4mC",
-      share: 100,
-    },
-  ],
-};
+const description = "This is a project";
+const baseUri = "ipfs://IPFS_HASH";
+const baseExternalUrl = "https://BASE_EXTERNAL_URL";
 
 // If you have selected Solana then the collection starts from 0 automatically
 const layerConfigurations = [
   {
-    growEditionSizeTo: 50,
+    growEditionSizeTo: 4,
     layersOrder: [
       { name: "Background" },
       { name: "Body" },
@@ -115,8 +100,6 @@ module.exports = {
   pixelFormat,
   text,
   namePrefix,
-  network,
-  solanaMetadata,
   gif,
   preview_gif,
 };

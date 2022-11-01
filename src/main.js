@@ -1,5 +1,4 @@
 const basePath = process.cwd();
-const { NETWORK } = require(`${basePath}/constants/network.js`);
 const { ethers } = require("ethers");
 const fs = require("fs");
 const { externalUrl } = require("./config");
@@ -21,8 +20,6 @@ const {
   extraMetadata,
   text,
   namePrefix,
-  network,
-  solanaMetadata,
   gif,
 } = require(`${basePath}/src/config.js`);
 const canvas = createCanvas(format.width, format.height);
@@ -106,15 +103,14 @@ const layersSetup = (layersOrder) => {
       layerObj.options?.["opacity"] != undefined
         ? layerObj.options?.["opacity"]
         : 1,
-    useIndex:
-      (() => {
-        for (let i = 0; i < layersOrder.length; ++i) {
-          if (layersOrder[i].name == layerObj.use) {
-            return i;
-          }
+    useIndex: (() => {
+      for (let i = 0; i < layersOrder.length; ++i) {
+        if (layersOrder[i].name == layerObj.use) {
+          return i;
         }
-        return -1;
-      })(),
+      }
+      return -1;
+    })(),
   }));
   layers = layers.map((layer, index) => {
     if (layer.useIndex >= 0) {
@@ -174,32 +170,6 @@ const addMetadata = (_dna, _edition) => {
     ...extraMetadata,
     attributes: attributesList,
   };
-  if (network == NETWORK.sol) {
-    tempMetadata = {
-      //Added metadata for solana
-      name: tempMetadata.name,
-      symbol: solanaMetadata.symbol,
-      description: tempMetadata.description,
-      //Added metadata for solana
-      seller_fee_basis_points: solanaMetadata.seller_fee_basis_points,
-      image: `${_edition}.png`,
-      //Added metadata for solana
-      external_url: solanaMetadata.external_url,
-      edition: _edition,
-      ...extraMetadata,
-      attributes: tempMetadata.attributes,
-      properties: {
-        files: [
-          {
-            uri: `${_edition}.png`,
-            type: "image/png",
-          },
-        ],
-        category: "image",
-        creators: solanaMetadata.creators,
-      },
-    };
-  }
   metadataList.push(tempMetadata);
   attributesList = [];
 };
@@ -253,7 +223,7 @@ const drawElement = (_renderObject, _index) => {
           format.height
         );
   }
-  if (_renderObject.useIndex >= 0) {
+  if (_renderObject.layer.useIndex < 0) {
     addAttributes(_renderObject);
   }
 };
@@ -303,8 +273,9 @@ const createDna = (_layers, tokenId) => {
     });
     let x = ethers.BigNumber.from(hash)
       .div(
-        ethers.BigNumber.from("0x10000000000000000")
-          .pow(ethers.BigNumber.from(index))
+        ethers.BigNumber.from("0x10000000000000000").pow(
+          ethers.BigNumber.from(index)
+        )
       )
       .mod(ethers.BigNumber.from(totalWeight))
       .toNumber();
@@ -321,7 +292,7 @@ const createDna = (_layers, tokenId) => {
   });
   return {
     hash: hash,
-    dna: randNum.join(DNA_DELIMITER)
+    dna: randNum.join(DNA_DELIMITER),
   };
 };
 
@@ -339,7 +310,7 @@ const saveMetaDataSingleFile = (_editionCount) => {
     : null;
   fs.writeFileSync(
     `${buildDir}/json/${_editionCount}.json`,
-    JSON.stringify(metadata, null, 2)
+    `${JSON.stringify(metadata, null, 2)}\n`
   );
 };
 
@@ -363,7 +334,7 @@ const startCreating = async () => {
   let failedCount = 0;
   let abstractedIndexes = [];
   for (
-    let i = network == NETWORK.sol ? 0 : 1;
+    let i = 1;
     i <= layerConfigurations[layerConfigurations.length - 1].growEditionSizeTo;
     i++
   ) {
@@ -425,16 +396,14 @@ const startCreating = async () => {
 
         console.log(hash);
         console.log(dna.split(DNA_DELIMITER));
-        console.log(
-          `Created edition: ${abstractedIndexes[0]}\n`
-        );
+        console.log(`Created edition: ${abstractedIndexes[0]}\n`);
       });
       editionCount++;
       abstractedIndexes.shift();
     }
     layerConfigIndex++;
   }
-  // writeMetaData(JSON.stringify(metadataList, null, 2));
+  writeMetaData(JSON.stringify(metadataList, null, 2));
 };
 
 module.exports = { startCreating, buildSetup, getElements };
