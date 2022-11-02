@@ -10,7 +10,7 @@ const baseExternalUrl = "https://BASE_EXTERNAL_URL";
 // If you have selected Solana then the collection starts from 0 automatically
 const layerConfigurations = [
   {
-    growEditionSizeTo: 4,
+    growEditionSizeTo: 3333,
     layersOrder: [
       { name: "Background" },
       { name: "Body" },
@@ -26,8 +26,8 @@ const shuffleLayerConfigurations = false;
 const debugLogs = false;
 
 const format = {
-  width: 80,
-  height: 80,
+  width: 8000,
+  height: 8000,
   smoothing: false,
 };
 
