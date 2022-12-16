@@ -163,10 +163,7 @@ const addMetadata = (_dna, _edition) => {
   let dateTime = Date.now();
   let tempMetadata = {
     edition: _edition,
-    name: `${namePrefix} #${_edition}`,
-    description: description,
     image: `${baseUri}/${_edition}.png`,
-    external_url: `${baseExternalUrl}/${_edition}`,
     ...extraMetadata,
     attributes: attributesList,
   };
